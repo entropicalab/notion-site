@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EUI Converter: kBtu/ft² ↔ kWh/m²</title>
+  <meta name="description" content="Convert building EUI between kBtu/ft² and kWh/m².">
+  <style>
+    :root { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    body { margin: 0; padding: 24px; }
+    .card { max-width: 560px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 12px; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    label { display: block; font-size: 14px; margin: 12px 0 6px; }
+    input, select { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .result { margin-top: 16px; font-size: 18px; font-weight: 600; }
+    .muted { color: #666; font-size: 12px; margin-top: 8px; }
+    .foot { margin-top: 16px; font-size: 12px; color: #444; }
+    button { padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; background: #f6f6f6; cursor: pointer; }
+    button:active { transform: translateY(1px); }
+  </style>
+</head>
+<body>
+  <div class="card" role="region" aria-label="EUI converter">
+    <h1>EUI Converter</h1>
+    <div class="row">
+      <div>
+        <label for="value">Value</label>
+        <input id="value" type="number" inputmode="decimal" placeholder="Enter number">
+      </div>
+      <div>
+        <label for="direction">Direction</label>
+        <select id="direction">
+          <option value="kbtu_to_kwh">kBtu/ft² → kWh/m²</option>
+          <option value="kwh_to_kbtu">kWh/m² → kBtu/ft²</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="result" id="result" aria-live="polite">—</div>
+
+    <div class="muted">Factor: 1 kBtu/ft² = 3.154 kWh/m².</div>
+
+    <div class="foot">
+      <button id="copy">Copy result</button>
+      <span id="copied" class="muted" aria-live="polite" style="margin-left:8px;"></span>
+    </div>
+  </div>
+
+  <script>
+    const KBtu_per_sf_to_kWh_per_m2 = 3.154;
+    const KWh_per_m2_to_kBtu_per_sf = 1 / KBtu_per_sf_to_kWh_per_m2;
+
+    const valueEl = document.getElementById('value');
+    const dirEl = document.getElementById('direction');
+    const resultEl = document.getElementById('result');
+    const copyBtn = document.getElementById('copy');
+    const copiedMsg = document.getElementById('copied');
+
+    function format(num) {
+      if (!isFinite(num)) return '—';
+      const abs = Math.abs(num);
+      if (abs === 0) return '0';
+      if (abs >= 1000) return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      if (abs >= 10) return num.toLocaleString(undefined, { maximumFractionDigits: 3 });
+      if (abs >= 1) return num.toLocaleString(undefined, { maximumFractionDigits: 4 });
+      return num.toLocaleString(undefined, { maximumSignificantDigits: 6 });
+    }
+
+    function compute() {
+      const v = parseFloat(valueEl.value);
+      if (isNaN(v)) { resultEl.textContent = '—'; return; }
+      if (dirEl.value === 'kbtu_to_kwh') {
+        const out = v * KBtu_per_sf_to_kWh_per_m2;
+        resultEl.textContent = `${format(out)} kWh/m²`;
+      } else {
+        const out = v * KWh_per_m2_to_kBtu_per_sf;
+        resultEl.textContent = `${format(out)} kBtu/ft²`;
+      }
+    }
+
+    valueEl.addEventListener('input', compute);
+    dirEl.addEventListener('change', compute);
+
+    copyBtn.addEventListener('click', async () => {
+      const text = resultEl.textContent.trim();
+      if (!text || text === '—') return;
+      try {
+        await navigator.clipboard.writeText(text);
+        copiedMsg.textContent = 'Copied';
+        setTimeout(() => copiedMsg.textContent = '', 1200);
+      } catch {
+        copiedMsg.textContent = 'Copy failed';
+        setTimeout(() => copiedMsg.textContent = '', 1500);
+      }
+    });
+
+    const params = new URLSearchParams(location.search);
+    if (params.has('v')) valueEl.value = params.get('v');
+    if (params.get('dir') === 'kwh_to_kbtu') dirEl.value = 'kwh_to_kbtu';
+    compute();
+  </script>
+</body>
+</html>
