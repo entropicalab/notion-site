@@ -3,33 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Custom Form</title>
+<title>Project Submission</title>
 <style>
+  :root { --bg:#f9f9f9; --fg:#222; --card:#fff; }
+  html,body { height:100%; }
   body {
     margin:0;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    background:#f9f9f9;
-    color:#222;
+    background:var(--bg);
+    color:var(--fg);
   }
   .form-wrapper {
     max-width: 900px;
     margin: 0 auto;
     padding: 24px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: var(--card);
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
     border-radius: 8px;
   }
+  h1 { margin: 0 0 16px; font-size: 24px; }
   iframe {
-    width: 100%;
-    height: 1000px; /* adjust depending on form length */
-    border: 0;
+    display:block;
+    width:100%;
+    height:1000px;     /* primary height */
+    min-height:80vh;   /* ensure viewport fill */
+    border:0;
+  }
+  @media (max-width: 768px) {
+    iframe { height: 1400px; }
   }
 </style>
 </head>
 <body>
   <div class="form-wrapper">
     <h1>Project Submission</h1>
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfZcIsgTstRABwxatrOy_XsF1Nn6RX0fZCIM153xcZzyvYNjg/viewform?embedded=true" width="640" height="460" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfZcIsgTstRABwxatrOy_XsF1Nn6RX0fZCIM153xcZzyvYNjg/viewform?embedded=true">Loading…</iframe>
   </div>
 </body>
 </html>
