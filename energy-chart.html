@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>energy chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    html,body { margin:0; padding:0; height:100%; }
+    #wrap { display:flex; align-items:center; justify-content:center; height:100vh; }
+    canvas { max-width: 900px; width: 95vw; height: 65vh; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <canvas id="c"></canvas>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('c');
+    const data = {
+      labels: ['office a','office b','office c','office d'],
+      datasets: [{
+        label: 'cooling kwh/month',
+        data: [12000, 9500, 14300, 8700]
+      }]
+    };
+    const cfg = {
+      type: 'bar',
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true },
+          tooltip: { enabled: true },
+          title: { display: true, text: 'dummy cooling load comparison' }
+        },
+        scales: { y: { beginAtZero: true } }
+      }
+    };
+    new Chart(ctx, cfg);
+  </script>
+</body>
+</html>
